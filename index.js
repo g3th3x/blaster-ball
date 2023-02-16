@@ -2,6 +2,7 @@ import { Player } from "./Player.js";
 import { Missile } from "./Missile.js";
 import { Enemy } from "./Enemy.js";
 import { Particle } from "./Particle.js";
+import { Score } from "./Score.js";
 
 // console.log(gsap);
 
@@ -10,12 +11,28 @@ window.addEventListener("load", () => {
   const ctx = cvs.getContext("2d");
   cvs.width = window.innerWidth;
   cvs.height = window.innerHeight;
+  ctx.imageSmoothingEnabled = true;
 
   const player = new Player(cvs.width / 2, cvs.height / 2, 10, "white");
+  const score = new Score();
 
   const missiles = [];
   const enemies = [];
   const particles = [];
+
+  let requestId;
+  let isPause = true;
+
+  document.addEventListener("keydown", (e) => {
+    const code = e.code;
+    if (code === "KeyP" && isPause) {
+      isPause = false;
+      cancelAnimationFrame(requestId);
+    } else if (code === "KeyP" && !isPause) {
+      isPause = true;
+      requestId = requestAnimationFrame(animate);
+    }
+  });
 
   document.addEventListener("click", (e) => {
     const angle = Math.atan2(
@@ -63,22 +80,9 @@ window.addEventListener("load", () => {
 
   spawnEnemies();
 
-  let requestId;
-  let isPause = true;
-
-  document.addEventListener("keydown", (e) => {
-    const code = e.code;
-    if (code === "KeyP" && isPause) {
-      isPause = false;
-      cancelAnimationFrame(requestId);
-    } else if (code === "KeyP" && !isPause) {
-      isPause = true;
-      requestId = requestAnimationFrame(animate);
-    }
-  });
-
   function animate() {
     requestId = requestAnimationFrame(animate);
+    score.draw(ctx);
     ctx.fillStyle = "rgba(0,0,0,0.1)";
     ctx.fillRect(0, 0, cvs.width, cvs.height);
     // ctx.clearRect(0, 0, cvs.width, cvs.height);
@@ -138,6 +142,9 @@ window.addEventListener("load", () => {
           }
 
           if (enemy.radius - 10 > 5) {
+            // Increase score on hit
+            score.increase(10);
+
             gsap.to(enemy, {
               radius: enemy.radius - 10,
             });
@@ -145,6 +152,9 @@ window.addEventListener("load", () => {
               missiles.splice(missileIndex, 1);
             }, 0);
           } else {
+            // Increase the score when an enemy removed from scene altogether
+            score.increase(15);
+
             setTimeout(() => {
               enemies.splice(enemyIndex, 1);
               missiles.splice(missileIndex, 1);
