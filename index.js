@@ -1,6 +1,7 @@
 import { Player } from "./Player.js";
 import { Missile } from "./Missile.js";
 import { Enemy } from "./Enemy.js";
+import { Particle } from "./Particle.js";
 
 // console.log(gsap);
 
@@ -14,6 +15,7 @@ window.addEventListener("load", () => {
 
   const missiles = [];
   const enemies = [];
+  const particles = [];
 
   document.addEventListener("click", (e) => {
     const angle = Math.atan2(
@@ -81,6 +83,11 @@ window.addEventListener("load", () => {
     ctx.fillRect(0, 0, cvs.width, cvs.height);
     // ctx.clearRect(0, 0, cvs.width, cvs.height);
     player.draw(ctx);
+    particles.forEach((particle, particleIndex) => {
+      particle.alpha <= 0
+        ? particles.slice(particleIndex, 1)
+        : particle.update(ctx);
+    });
     missiles.forEach((missile, missileIndex) => {
       missile.update(ctx);
 
@@ -112,6 +119,24 @@ window.addEventListener("load", () => {
         const dist = Math.hypot(missile.x - enemy.x, missile.y - enemy.y);
         // Objects hit
         if (dist - enemy.radius - missile.radius < 0.1) {
+          // Particle explosions
+          for (let i = 0; i < enemy.radius * 2; i++) {
+            particles.push(
+              new Particle(
+                missile.x,
+                missile.y,
+                Math.random() * 2,
+                enemy.color,
+                {
+                  //   x: Math.random() - 0.5,
+                  //   y: Math.random() - 0.5,
+                  x: (Math.random() - 0.5) * (Math.random() * 6),
+                  y: (Math.random() - 0.5) * (Math.random() * 6),
+                }
+              )
+            );
+          }
+
           if (enemy.radius - 10 > 5) {
             gsap.to(enemy, {
               radius: enemy.radius - 10,
