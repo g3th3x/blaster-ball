@@ -1,10 +1,25 @@
+import { Player } from "./Player.js";
+
 import { getRand } from "./getRand.js";
 
 window.addEventListener("load", () => {
-  const canvas = document.querySelector("canvas");
-  const ctx = canvas.getContext("2d");
-  canvas.width = 800;
-  canvas.height = 600;
+  const cvs = document.querySelector("canvas");
+  const ctx = cvs.getContext("2d");
+  //   cvs.width = 800;
+  //   cvs.height = 600;
+  cvs.width = window.innerWidth;
+  cvs.height = window.innerHeight;
+
+  const player = new Player(cvs.width / 2, cvs.height / 2, 60, "red");
+
+  console.log(player);
+
+  //for test
+  let playerPos = {
+    x: cvs.width / 2,
+    y: cvs.height / 2,
+    radius: 60,
+  };
 
   let requestId;
   let isPause = true;
@@ -20,24 +35,35 @@ window.addEventListener("load", () => {
     }
   });
 
-  let playerPos = {
-    x: canvas.width / 2,
-    y: canvas.height / 2,
-    radius: 60,
-  };
+  //   let playerPos = {
+  //     x: cvs.width / 2,
+  //     y: cvs.height / 2,
+  //     radius: 60,
+  //   };
 
-  function player(playerPos) {
-    ctx.beginPath();
-    ctx.fillStyle = "#f00";
-    ctx.arc(playerPos.x, playerPos.y, playerPos.radius, 0, Math.PI * 2);
-    ctx.fill();
-  }
+  //   function playerOne(playerPos) {
+  //     ctx.beginPath();
+  //     ctx.fillStyle = "#f00";
+  //     ctx.arc(playerPos.x, playerPos.y, playerPos.radius, 0, Math.PI * 2);
+  //     ctx.fill();
+  //   }
+
+  //   let enemyPos = {
+  //     x: getRand(0, 30),
+  //     y: getRand(0, 30),
+  //     radius: 30,
+  //   };
+  const radiusTest = 30;
 
   let enemyPos = {
-    x: getRand(0, 30),
-    y: getRand(0, 30),
+    x: Math.random() < 0.5 ? 0 - radiusTest : cvs.width + radiusTest,
+    y: Math.random() < 0.5 ? 0 - radiusTest : cvs.height + radiusTest,
     radius: 30,
   };
+
+  //   const radius = 30;
+  //   const x = Math.random() < 0.5 ? 0 - radius : cvs.width + radius;
+  //   const y = Math.random() < 0.5 ? 0 - radius : cvs.height + radius;
 
   function enemy(enemyPos) {
     ctx.beginPath();
@@ -62,8 +88,11 @@ window.addEventListener("load", () => {
   }
 
   function render() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    player(playerPos);
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
+    //playerOne(playerPos);
+
+    player.draw(ctx);
+
     enemyPos.x++;
     enemyPos.y++;
     enemy(enemyPos);
@@ -76,14 +105,22 @@ window.addEventListener("load", () => {
       //     y: getRand(0, 30),
       //     radius: 30,
       //   };
-      enemyPos.x = getRand(0, 30);
-      enemyPos.y = getRand(0, 30);
+      //   enemyPos.x = getRand(0, 30);
+      //     enemyPos.y = getRand(0, 30);
+
+      enemyPos.x =
+        Math.random() < 0.5 ? 0 - radiusTest : cvs.width + radiusTest;
+
+      enemyPos.y =
+        Math.random() < 0.5 ? 0 - radiusTest : cvs.height + radiusTest;
+
       console.log(`x: ${enemyPos.x} y: ${enemyPos.y}`);
     }
   }
 
   function animate() {
     render();
+
     requestId = requestAnimationFrame(animate);
   }
 
