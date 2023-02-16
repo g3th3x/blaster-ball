@@ -15,14 +15,30 @@ window.addEventListener("load", () => {
 
   console.log(player);
 
-  const missile = new Missile(cvs.width / 2, cvs.height / 2, 5, "blue", {
-    x: 1,
-    y: 1,
-  });
+  const missile = [];
+
+  //   const missile = new Missile(cvs.width / 2, cvs.height / 2, 5, "blue", {
+  //     x: 1,
+  //     y: 1,
+  //   });
 
   document.addEventListener("click", (e) => {
-    // console.log(e);
-    // console.log("Missile");
+    const angle = Math.atan2(
+      e.clientY - cvs.height / 2,
+      e.clientX - cvs.width / 2
+    );
+
+    console.log(angle);
+
+    const velocity = {
+      x: Math.cos(angle),
+      y: Math.sin(angle),
+    };
+
+    missile.push(
+      new Missile(cvs.width / 2, cvs.height / 2, 5, "blue", velocity)
+    );
+
     // const missile = new Missile(e.clientX, e.clientY, 5, "blue", null);
     // const missile = new Missile(cvs.width / 2, cvs.height / 2, 5, "blue", {
     //   x: 1,
@@ -105,12 +121,6 @@ window.addEventListener("load", () => {
   }
 
   function render() {
-    //ctx.clearRect(0, 0, cvs.width, cvs.height);
-    //playerOne(playerPos);
-
-    player.draw(ctx);
-    missile.draw(ctx);
-    missile.update();
     enemyPos.x++;
     enemyPos.y++;
     enemy(enemyPos);
@@ -137,9 +147,13 @@ window.addEventListener("load", () => {
   }
 
   function animate() {
-    render();
-
     requestId = requestAnimationFrame(animate);
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
+    player.draw(ctx);
+    missile.forEach((missile) => {
+      missile.update(ctx);
+    });
+    render();
   }
 
   animate();
