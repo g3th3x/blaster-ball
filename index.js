@@ -2,6 +2,8 @@ import { Player } from "./Player.js";
 import { Missile } from "./Missile.js";
 import { Enemy } from "./Enemy.js";
 
+// console.log(gsap);
+
 window.addEventListener("load", () => {
   const cvs = document.querySelector("canvas");
   const ctx = cvs.getContext("2d");
@@ -14,7 +16,6 @@ window.addEventListener("load", () => {
   const enemies = [];
 
   document.addEventListener("click", (e) => {
-    console.log(missiles);
     const angle = Math.atan2(
       e.clientY - cvs.height / 2,
       e.clientX - cvs.width / 2
@@ -55,7 +56,6 @@ window.addEventListener("load", () => {
       };
 
       enemies.push(new Enemy(x, y, radius, color, velocity));
-      //   console.log(enemies);
     }, 1000);
   }
 
@@ -112,8 +112,10 @@ window.addEventListener("load", () => {
         const dist = Math.hypot(missile.x - enemy.x, missile.y - enemy.y);
         // Objects hit
         if (dist - enemy.radius - missile.radius < 0.1) {
-          if (enemy.radius - 10 > 10) {
-            enemy.radius -= 10;
+          if (enemy.radius - 10 > 5) {
+            gsap.to(enemy, {
+              radius: enemy.radius - 10,
+            });
             setTimeout(() => {
               missiles.splice(missileIndex, 1);
             }, 0);
