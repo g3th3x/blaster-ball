@@ -1,34 +1,25 @@
 import { Player } from "./Player.js";
 import { Missile } from "./Missile.js";
+import { Enemy } from "./Enemy.js";
 
 import { getRand } from "./getRand.js";
 
 window.addEventListener("load", () => {
   const cvs = document.querySelector("canvas");
   const ctx = cvs.getContext("2d");
-  //   cvs.width = 800;
-  //   cvs.height = 600;
   cvs.width = window.innerWidth;
   cvs.height = window.innerHeight;
 
   const player = new Player(cvs.width / 2, cvs.height / 2, 60, "red");
 
-  console.log(player);
-
   const missile = [];
-
-  //   const missile = new Missile(cvs.width / 2, cvs.height / 2, 5, "blue", {
-  //     x: 1,
-  //     y: 1,
-  //   });
+  const enemies = [];
 
   document.addEventListener("click", (e) => {
     const angle = Math.atan2(
       e.clientY - cvs.height / 2,
       e.clientX - cvs.width / 2
     );
-
-    console.log(angle);
 
     const velocity = {
       x: Math.cos(angle),
@@ -38,15 +29,29 @@ window.addEventListener("load", () => {
     missile.push(
       new Missile(cvs.width / 2, cvs.height / 2, 5, "blue", velocity)
     );
-
-    // const missile = new Missile(e.clientX, e.clientY, 5, "blue", null);
-    // const missile = new Missile(cvs.width / 2, cvs.height / 2, 5, "blue", {
-    //   x: 1,
-    //   y: 1,
-    // });
-    // console.log(missile);
   });
 
+  function spawnEnemies() {
+    setInterval(() => {
+      const x = Math.random() * cvs.width;
+      const y = Math.random() * cvs.height;
+      const radius = 30;
+      const color = "green";
+
+      const angle = Math.atan2(cvs.height / 2 - y, cvs.width / 2 - x);
+
+      const velocity = {
+        x: Math.cos(angle),
+        y: Math.sin(angle),
+      };
+
+      enemies.push(new Enemy(x, y, radius, color, velocity));
+
+      console.log(enemies);
+    }, 1000);
+  }
+
+  spawnEnemies();
   //for test
   let playerPos = {
     x: cvs.width / 2,
@@ -67,19 +72,6 @@ window.addEventListener("load", () => {
       requestId = requestAnimationFrame(animate);
     }
   });
-
-  //   let playerPos = {
-  //     x: cvs.width / 2,
-  //     y: cvs.height / 2,
-  //     radius: 60,
-  //   };
-
-  //   function playerOne(playerPos) {
-  //     ctx.beginPath();
-  //     ctx.fillStyle = "#f00";
-  //     ctx.arc(playerPos.x, playerPos.y, playerPos.radius, 0, Math.PI * 2);
-  //     ctx.fill();
-  //   }
 
   //   let enemyPos = {
   //     x: getRand(0, 30),
@@ -152,6 +144,9 @@ window.addEventListener("load", () => {
     player.draw(ctx);
     missile.forEach((missile) => {
       missile.update(ctx);
+    });
+    enemies.forEach((enemy) => {
+      enemy.update(ctx);
     });
     render();
   }
