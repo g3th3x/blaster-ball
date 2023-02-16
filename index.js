@@ -1,4 +1,5 @@
 import { Player } from "./Player.js";
+import { Missile } from "./Missile.js";
 
 import { getRand } from "./getRand.js";
 
@@ -13,6 +14,22 @@ window.addEventListener("load", () => {
   const player = new Player(cvs.width / 2, cvs.height / 2, 60, "red");
 
   console.log(player);
+
+  const missile = new Missile(cvs.width / 2, cvs.height / 2, 5, "blue", {
+    x: 1,
+    y: 1,
+  });
+
+  document.addEventListener("click", (e) => {
+    // console.log(e);
+    // console.log("Missile");
+    // const missile = new Missile(e.clientX, e.clientY, 5, "blue", null);
+    // const missile = new Missile(cvs.width / 2, cvs.height / 2, 5, "blue", {
+    //   x: 1,
+    //   y: 1,
+    // });
+    // console.log(missile);
+  });
 
   //for test
   let playerPos = {
@@ -88,11 +105,12 @@ window.addEventListener("load", () => {
   }
 
   function render() {
-    ctx.clearRect(0, 0, cvs.width, cvs.height);
+    //ctx.clearRect(0, 0, cvs.width, cvs.height);
     //playerOne(playerPos);
 
     player.draw(ctx);
-
+    missile.draw(ctx);
+    missile.update();
     enemyPos.x++;
     enemyPos.y++;
     enemy(enemyPos);
