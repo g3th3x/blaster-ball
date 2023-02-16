@@ -14,6 +14,7 @@ window.addEventListener("load", () => {
   const enemies = [];
 
   document.addEventListener("click", (e) => {
+    console.log(missiles);
     const angle = Math.atan2(
       e.clientY - cvs.height / 2,
       e.clientX - cvs.width / 2
@@ -77,8 +78,20 @@ window.addEventListener("load", () => {
     requestId = requestAnimationFrame(animate);
     ctx.clearRect(0, 0, cvs.width, cvs.height);
     player.draw(ctx);
-    missiles.forEach((missile) => {
+    missiles.forEach((missile, missileIndex) => {
       missile.update(ctx);
+
+      // Removing a missile from the edge of the screen
+      if (
+        missile.x + missile.radius < 0 ||
+        missile.x - missile.radius > cvs.width ||
+        missile.y + missile.radius < 0 ||
+        missile.y - missile.radius > cvs.height
+      ) {
+        setTimeout(() => {
+          missiles.splice(missileIndex, 1);
+        }, 0);
+      }
     });
 
     enemies.forEach((enemy, enemyIndex) => {
