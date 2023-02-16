@@ -3,3 +3,5 @@ Create a Missile
 Create a Enemies
 Detect collision on enemy / missile hit
 Detect collision on enemy / player hit
+Removing a missile from the edge of the screen
+Colorize the game

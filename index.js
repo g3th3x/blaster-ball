@@ -8,7 +8,7 @@ window.addEventListener("load", () => {
   cvs.width = window.innerWidth;
   cvs.height = window.innerHeight;
 
-  const player = new Player(cvs.width / 2, cvs.height / 2, 60, "red");
+  const player = new Player(cvs.width / 2, cvs.height / 2, 10, "white");
 
   const missiles = [];
   const enemies = [];
@@ -20,13 +20,14 @@ window.addEventListener("load", () => {
       e.clientX - cvs.width / 2
     );
 
+    const accel = 5;
     const velocity = {
-      x: Math.cos(angle),
-      y: Math.sin(angle),
+      x: Math.cos(angle) * accel,
+      y: Math.sin(angle) * accel,
     };
 
     missiles.push(
-      new Missile(cvs.width / 2, cvs.height / 2, 5, "blue", velocity)
+      new Missile(cvs.width / 2, cvs.height / 2, 5, "white", velocity)
     );
   });
 
@@ -44,7 +45,7 @@ window.addEventListener("load", () => {
         y = Math.random() < 0.5 ? 0 - radius : cvs.height + radius;
       }
 
-      const color = "green";
+      const color = `hsl(${Math.random() * 360},50%,50%)`;
 
       const angle = Math.atan2(cvs.height / 2 - y, cvs.width / 2 - x);
 
@@ -76,7 +77,9 @@ window.addEventListener("load", () => {
 
   function animate() {
     requestId = requestAnimationFrame(animate);
-    ctx.clearRect(0, 0, cvs.width, cvs.height);
+    ctx.fillStyle = "rgba(0,0,0,0.1)";
+    ctx.fillRect(0, 0, cvs.width, cvs.height);
+    // ctx.clearRect(0, 0, cvs.width, cvs.height);
     player.draw(ctx);
     missiles.forEach((missile, missileIndex) => {
       missile.update(ctx);
