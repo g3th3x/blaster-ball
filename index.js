@@ -112,11 +112,17 @@ window.addEventListener("load", () => {
         const dist = Math.hypot(missile.x - enemy.x, missile.y - enemy.y);
         // Objects hit
         if (dist - enemy.radius - missile.radius < 0.1) {
-          // setTimeout for fix flicker
-          setTimeout(() => {
-            enemies.splice(enemyIndex, 1);
-            missiles.splice(missileIndex, 1);
-          }, 0);
+          if (enemy.radius - 10 > 10) {
+            enemy.radius -= 10;
+            setTimeout(() => {
+              missiles.splice(missileIndex, 1);
+            }, 0);
+          } else {
+            setTimeout(() => {
+              enemies.splice(enemyIndex, 1);
+              missiles.splice(missileIndex, 1);
+            }, 0);
+          }
         }
       });
     });

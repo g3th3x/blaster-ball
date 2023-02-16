@@ -5,3 +5,7 @@ Detect collision on enemy / missile hit
 Detect collision on enemy / player hit
 Removing a missile from the edge of the screen
 Colorize the game
+Shrink enemies on hit
+
+
+*setTimeout for fix flicker
