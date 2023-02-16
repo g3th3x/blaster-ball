@@ -2,8 +2,6 @@ import { Player } from "./Player.js";
 import { Missile } from "./Missile.js";
 import { Enemy } from "./Enemy.js";
 
-import { getRand } from "./getRand.js";
-
 window.addEventListener("load", () => {
   const cvs = document.querySelector("canvas");
   const ctx = cvs.getContext("2d");
@@ -12,7 +10,7 @@ window.addEventListener("load", () => {
 
   const player = new Player(cvs.width / 2, cvs.height / 2, 60, "red");
 
-  const missile = [];
+  const missiles = [];
   const enemies = [];
 
   document.addEventListener("click", (e) => {
@@ -26,7 +24,7 @@ window.addEventListener("load", () => {
       y: Math.sin(angle),
     };
 
-    missile.push(
+    missiles.push(
       new Missile(cvs.width / 2, cvs.height / 2, 5, "blue", velocity)
     );
   });
@@ -55,18 +53,11 @@ window.addEventListener("load", () => {
       };
 
       enemies.push(new Enemy(x, y, radius, color, velocity));
-
-      console.log(enemies);
+      //   console.log(enemies);
     }, 1000);
   }
 
   spawnEnemies();
-  //for test
-  let playerPos = {
-    x: cvs.width / 2,
-    y: cvs.height / 2,
-    radius: 60,
-  };
 
   let requestId;
   let isPause = true;
@@ -82,73 +73,27 @@ window.addEventListener("load", () => {
     }
   });
 
-  const radiusTest = 30;
-
-  let enemyPos = {
-    x: Math.random() < 0.5 ? 0 - radiusTest : cvs.width + radiusTest,
-    y: Math.random() < 0.5 ? 0 - radiusTest : cvs.height + radiusTest,
-    radius: 30,
-  };
-
-  function enemy(enemyPos) {
-    ctx.beginPath();
-    ctx.fillStyle = "#0f0";
-    ctx.arc(enemyPos.x, enemyPos.y, enemyPos.radius, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  function arcsCollision(first, second) {
-    const dx = first.x - second.x;
-    const dy = first.y - second.y;
-
-    // console.log(`x1: ${first.x} x2: ${second.x}`);
-    // console.log(`y1: ${first.y} y2: ${second.y}`);
-    // console.log(`dx: ${dx} dy: ${dy}`);
-    const distance = Math.sqrt(dx ** 2 + dy ** 2);
-    // console.log(`dx**2: ${dx ** 2} dy**2: ${dy ** 2}`);
-    // console.log(`distance: ${distance}`);
-
-    //   return console.log(distance <= first.radius + second.radius + 0.1);
-    return distance <= first.radius + second.radius + 0.1;
-  }
-
-  function render() {
-    enemyPos.x++;
-    enemyPos.y++;
-    enemy(enemyPos);
-
-    // console.log(typeof arcsCollision(playerPos, enemyPos));
-
-    if (arcsCollision(playerPos, enemyPos) === true) {
-      //   enemyPos = {
-      //     x: getRand(0, 30),
-      //     y: getRand(0, 30),
-      //     radius: 30,
-      //   };
-      //   enemyPos.x = getRand(0, 30);
-      //     enemyPos.y = getRand(0, 30);
-
-      enemyPos.x =
-        Math.random() < 0.5 ? 0 - radiusTest : cvs.width + radiusTest;
-
-      enemyPos.y =
-        Math.random() < 0.5 ? 0 - radiusTest : cvs.height + radiusTest;
-
-      console.log(`x: ${enemyPos.x} y: ${enemyPos.y}`);
-    }
-  }
-
   function animate() {
     requestId = requestAnimationFrame(animate);
     ctx.clearRect(0, 0, cvs.width, cvs.height);
     player.draw(ctx);
-    missile.forEach((missile) => {
+    missiles.forEach((missile) => {
       missile.update(ctx);
     });
-    enemies.forEach((enemy) => {
+
+    enemies.forEach((enemy, enemyIndex) => {
       enemy.update(ctx);
+      // Detect collision on enemy / missile hit
+      missiles.forEach((missile, missileIndex) => {
+        const dist = Math.hypot(missile.x - enemy.x, missile.y - enemy.y);
+
+        if (dist - enemy.radius - missile.radius < 0.5) {
+          console.log("hit");
+          enemies.splice(enemyIndex, 1);
+          missiles.splice(missileIndex, 1);
+        }
+      });
     });
-    render();
   }
 
   animate();
