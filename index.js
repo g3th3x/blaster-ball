@@ -33,9 +33,18 @@ window.addEventListener("load", () => {
 
   function spawnEnemies() {
     setInterval(() => {
-      const x = Math.random() * cvs.width;
-      const y = Math.random() * cvs.height;
-      const radius = 30;
+      const radius = Math.random() * (30 - 5) + 5;
+
+      let x, y;
+
+      if (Math.random() < 0.5) {
+        x = Math.random() < 0.5 ? 0 - radius : cvs.width + radius;
+        y = Math.random() * cvs.height;
+      } else {
+        x = Math.random() * cvs.width;
+        y = Math.random() < 0.5 ? 0 - radius : cvs.height + radius;
+      }
+
       const color = "green";
 
       const angle = Math.atan2(cvs.height / 2 - y, cvs.width / 2 - x);
@@ -73,11 +82,6 @@ window.addEventListener("load", () => {
     }
   });
 
-  //   let enemyPos = {
-  //     x: getRand(0, 30),
-  //     y: getRand(0, 30),
-  //     radius: 30,
-  //   };
   const radiusTest = 30;
 
   let enemyPos = {
@@ -85,10 +89,6 @@ window.addEventListener("load", () => {
     y: Math.random() < 0.5 ? 0 - radiusTest : cvs.height + radiusTest,
     radius: 30,
   };
-
-  //   const radius = 30;
-  //   const x = Math.random() < 0.5 ? 0 - radius : cvs.width + radius;
-  //   const y = Math.random() < 0.5 ? 0 - radius : cvs.height + radius;
 
   function enemy(enemyPos) {
     ctx.beginPath();
