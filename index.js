@@ -83,14 +83,24 @@ window.addEventListener("load", () => {
 
     enemies.forEach((enemy, enemyIndex) => {
       enemy.update(ctx);
+      // Detect collision on enemy / player hit
+      const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+      // Objects hit
+      if (dist - enemy.radius - player.radius < 0.1) {
+        cancelAnimationFrame(requestId);
+        console.log("game over");
+      }
+
       // Detect collision on enemy / missile hit
       missiles.forEach((missile, missileIndex) => {
         const dist = Math.hypot(missile.x - enemy.x, missile.y - enemy.y);
-
-        if (dist - enemy.radius - missile.radius < 0.5) {
-          console.log("hit");
-          enemies.splice(enemyIndex, 1);
-          missiles.splice(missileIndex, 1);
+        // Objects hit
+        if (dist - enemy.radius - missile.radius < 0.1) {
+          // setTimeout for fix flicker
+          setTimeout(() => {
+            enemies.splice(enemyIndex, 1);
+            missiles.splice(missileIndex, 1);
+          }, 0);
         }
       });
     });
