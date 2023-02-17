@@ -10,5 +10,6 @@ Create particle explosion on hit
 Add score
 Add game over UI
 Add restart game
+Add high score in localStorage
 
 *setTimeout for fix flicker

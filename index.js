@@ -15,7 +15,10 @@ window.addEventListener("load", () => {
   const modalEl = document.querySelector("#modalEl");
   const scoreEl = document.querySelector("#scoreEl");
   const highScoreEl = document.querySelector("#highScoreEl");
+  const highScoreLSEl = document.querySelector("#highScoreLSEl");
   //   const score = new Score();
+
+  let highScore = localStorage.getItem("highScore");
 
   let player = new Player(cvs.width / 2, cvs.height / 2, 10, "white");
   let missiles = [];
@@ -39,6 +42,10 @@ window.addEventListener("load", () => {
     highScoreEl.textContent = scoreTmp;
     isPause = false;
     isGameOver = false;
+    highScore = localStorage.getItem("highScore");
+    highScore > 0
+      ? (highScoreLSEl.textContent = highScore)
+      : (highScoreLSEl.textContent = 0);
   }
 
   document.addEventListener("keydown", (e) => {
@@ -132,6 +139,10 @@ window.addEventListener("load", () => {
         cancelAnimationFrame(requestId);
         modalEl.style.display = "flex";
         highScoreEl.textContent = scoreTmp;
+        if (scoreTmp > highScore) {
+          localStorage.setItem("highScore", scoreTmp);
+        }
+
         isGameOver = true;
       }
 
