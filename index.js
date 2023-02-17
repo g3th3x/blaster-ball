@@ -11,30 +11,46 @@ window.addEventListener("load", () => {
   cvs.height = window.innerHeight;
   ctx.imageSmoothingEnabled = false;
 
-  const scoreEl = document.querySelector("#scoreEl");
   const startGameBtn = document.querySelector("#startGameBtn");
   const modalEl = document.querySelector("#modalEl");
+  const scoreEl = document.querySelector("#scoreEl");
   const highScoreEl = document.querySelector("#highScoreEl");
-
-  const player = new Player(cvs.width / 2, cvs.height / 2, 10, "white");
   //   const score = new Score();
 
-  const missiles = [];
-  const enemies = [];
-  const particles = [];
+  let player = new Player(cvs.width / 2, cvs.height / 2, 10, "white");
+  let missiles = [];
+  let enemies = [];
+  let particles = [];
 
   let scoreTmp = 0;
   let requestId;
-  let isPause = true;
+  let isPause = false;
+  let isGameOver = false;
+
+  const accel = 5;
+
+  function init() {
+    player = new Player(cvs.width / 2, cvs.height / 2, 10, "white");
+    missiles = [];
+    enemies = [];
+    particles = [];
+    scoreTmp = 0;
+    scoreEl.textContent = scoreTmp;
+    highScoreEl.textContent = scoreTmp;
+    isPause = false;
+    isGameOver = false;
+  }
 
   document.addEventListener("keydown", (e) => {
-    const code = e.code;
-    if (code === "KeyP" && isPause) {
-      isPause = false;
-      cancelAnimationFrame(requestId);
-    } else if (code === "KeyP" && !isPause) {
-      isPause = true;
-      requestId = requestAnimationFrame(animate);
+    if (!isGameOver) {
+      const code = e.code;
+      if (code === "KeyP" && !isPause) {
+        isPause = true;
+        cancelAnimationFrame(requestId);
+      } else if (code === "KeyP" && isPause) {
+        isPause = false;
+        requestId = requestAnimationFrame(animate);
+      }
     }
   });
 
@@ -44,7 +60,6 @@ window.addEventListener("load", () => {
       e.clientX - cvs.width / 2
     );
 
-    const accel = 5;
     const velocity = {
       x: Math.cos(angle) * accel,
       y: Math.sin(angle) * accel,
@@ -86,7 +101,6 @@ window.addEventListener("load", () => {
     requestId = requestAnimationFrame(animate);
     ctx.fillStyle = "rgba(0,0,0,0.1)";
     ctx.fillRect(0, 0, cvs.width, cvs.height);
-    // ctx.clearRect(0, 0, cvs.width, cvs.height);
     player.draw(ctx);
     particles.forEach((particle, particleIndex) => {
       particle.alpha <= 0
@@ -118,7 +132,7 @@ window.addEventListener("load", () => {
         cancelAnimationFrame(requestId);
         modalEl.style.display = "flex";
         highScoreEl.textContent = scoreTmp;
-        // console.log("game over");
+        isGameOver = true;
       }
 
       // Detect collision on enemy / missile hit
@@ -172,6 +186,7 @@ window.addEventListener("load", () => {
   }
 
   startGameBtn.addEventListener("click", () => {
+    init();
     animate();
     spawnEnemies();
     modalEl.style.display = "none";

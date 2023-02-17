@@ -8,6 +8,6 @@ Colorize the game
 Shrink enemies on hit
 Create particle explosion on hit
 Add score
-Add start game button (modal window)
+Add game over UI
 
 *setTimeout for fix flicker
