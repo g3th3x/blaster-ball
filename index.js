@@ -4,14 +4,16 @@ import { Enemy } from "./Enemy.js";
 import { Particle } from "./Particle.js";
 import { Score } from "./Score.js";
 
-// console.log(gsap);
-
 window.addEventListener("load", () => {
   const cvs = document.querySelector("canvas");
   const ctx = cvs.getContext("2d");
   cvs.width = window.innerWidth;
   cvs.height = window.innerHeight;
-  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingEnabled = false;
+
+  const scoreEl = document.querySelector("#scoreEl");
+  const startGameBtn = document.querySelector("#startGameBtn");
+  const modalEl = document.querySelector("#modalEl");
 
   const player = new Player(cvs.width / 2, cvs.height / 2, 10, "white");
   const score = new Score();
@@ -78,11 +80,8 @@ window.addEventListener("load", () => {
     }, 1000);
   }
 
-  spawnEnemies();
-
   function animate() {
     requestId = requestAnimationFrame(animate);
-    score.draw(ctx);
     ctx.fillStyle = "rgba(0,0,0,0.1)";
     ctx.fillRect(0, 0, cvs.width, cvs.height);
     // ctx.clearRect(0, 0, cvs.width, cvs.height);
@@ -115,6 +114,7 @@ window.addEventListener("load", () => {
       // Objects hit
       if (dist - enemy.radius - player.radius < 0.1) {
         cancelAnimationFrame(requestId);
+        modalEl.style.display = "flex";
         console.log("game over");
       }
 
@@ -163,7 +163,12 @@ window.addEventListener("load", () => {
         }
       });
     });
+    score.draw(ctx);
   }
 
-  animate();
+  startGameBtn.addEventListener("click", () => {
+    animate();
+    spawnEnemies();
+    modalEl.style.display = "none";
+  });
 });
