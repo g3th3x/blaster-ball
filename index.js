@@ -1,8 +1,8 @@
-import { Player } from "./Player.js";
-import { Missile } from "./Missile.js";
-import { Enemy } from "./Enemy.js";
-import { Particle } from "./Particle.js";
-// import { Score } from "./Score.js";
+import { Player } from "./src/Player.js";
+import { Missile } from "./src/Missile.js";
+import { Enemy } from "./src/Enemy.js";
+import { Particle } from "./src/Particle.js";
+// import { Score } from "./src/dis/Score.js";
 
 window.addEventListener("load", () => {
   const cvs = document.querySelector("canvas");

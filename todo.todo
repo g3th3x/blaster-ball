@@ -9,5 +9,6 @@ Shrink enemies on hit
 Create particle explosion on hit
 Add score
 Add game over UI
+Add restart game
 
 *setTimeout for fix flicker
