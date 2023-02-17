@@ -2,7 +2,7 @@ import { Player } from "./Player.js";
 import { Missile } from "./Missile.js";
 import { Enemy } from "./Enemy.js";
 import { Particle } from "./Particle.js";
-import { Score } from "./Score.js";
+// import { Score } from "./Score.js";
 
 window.addEventListener("load", () => {
   const cvs = document.querySelector("canvas");
@@ -14,14 +14,16 @@ window.addEventListener("load", () => {
   const scoreEl = document.querySelector("#scoreEl");
   const startGameBtn = document.querySelector("#startGameBtn");
   const modalEl = document.querySelector("#modalEl");
+  const highScoreEl = document.querySelector("#highScoreEl");
 
   const player = new Player(cvs.width / 2, cvs.height / 2, 10, "white");
-  const score = new Score();
+  //   const score = new Score();
 
   const missiles = [];
   const enemies = [];
   const particles = [];
 
+  let scoreTmp = 0;
   let requestId;
   let isPause = true;
 
@@ -111,11 +113,12 @@ window.addEventListener("load", () => {
       enemy.update(ctx);
       // Detect collision on enemy / player hit
       const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
-      // Objects hit
+      // Objects hit (Game Over)
       if (dist - enemy.radius - player.radius < 0.1) {
         cancelAnimationFrame(requestId);
         modalEl.style.display = "flex";
-        console.log("game over");
+        highScoreEl.textContent = scoreTmp;
+        // console.log("game over");
       }
 
       // Detect collision on enemy / missile hit
@@ -132,8 +135,6 @@ window.addEventListener("load", () => {
                 Math.random() * 2,
                 enemy.color,
                 {
-                  //   x: Math.random() - 0.5,
-                  //   y: Math.random() - 0.5,
                   x: (Math.random() - 0.5) * (Math.random() * 6),
                   y: (Math.random() - 0.5) * (Math.random() * 6),
                 }
@@ -143,7 +144,9 @@ window.addEventListener("load", () => {
 
           if (enemy.radius - 10 > 5) {
             // Increase score on hit
-            score.increase(10);
+            // score.increase(10);
+            scoreEl.textContent = scoreTmp;
+            scoreTmp += 10;
 
             gsap.to(enemy, {
               radius: enemy.radius - 10,
@@ -153,7 +156,9 @@ window.addEventListener("load", () => {
             }, 0);
           } else {
             // Increase the score when an enemy removed from scene altogether
-            score.increase(15);
+            // score.increase(15);
+            scoreTmp += 15;
+            scoreEl.textContent = scoreTmp;
 
             setTimeout(() => {
               enemies.splice(enemyIndex, 1);
@@ -163,7 +168,7 @@ window.addEventListener("load", () => {
         }
       });
     });
-    score.draw(ctx);
+    // score.draw(ctx);
   }
 
   startGameBtn.addEventListener("click", () => {
