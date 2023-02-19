@@ -11,6 +11,11 @@ window.addEventListener("load", () => {
   cvs.height = window.innerHeight;
   ctx.imageSmoothingEnabled = false;
 
+  const laser = new Audio("./audio/laser.wav");
+  laser.volume = 0.1;
+  const blast = new Audio("./audio/blast.wav");
+  blast.volume = 0.1;
+
   const startGameBtn = document.querySelector("#startGameBtn");
   const modalEl = document.querySelector("#modalEl");
   const scoreEl = document.querySelector("#scoreEl");
@@ -75,6 +80,7 @@ window.addEventListener("load", () => {
     missiles.push(
       new Missile(cvs.width / 2, cvs.height / 2, 5, "white", velocity)
     );
+    if (!isGameOver) laser.play();
   });
 
   function spawnEnemies() {
@@ -170,8 +176,10 @@ window.addEventListener("load", () => {
           if (enemy.radius - 10 > 5) {
             // Increase score on hit
             // score.increase(10);
-            scoreEl.textContent = scoreTmp;
             scoreTmp += 10;
+            scoreEl.textContent = scoreTmp;
+
+            blast.play();
 
             gsap.to(enemy, {
               radius: enemy.radius - 10,
@@ -184,6 +192,8 @@ window.addEventListener("load", () => {
             // score.increase(15);
             scoreTmp += 15;
             scoreEl.textContent = scoreTmp;
+
+            blast.play();
 
             setTimeout(() => {
               enemies.splice(enemyIndex, 1);
