@@ -1,3 +1,5 @@
+import { playSound, stopSound } from "./engine/soundHandler.js";
+
 export class Enemy {
   constructor(x, y, radius, color, velocity) {
     this.x = x;
@@ -5,6 +7,10 @@ export class Enemy {
     this.radius = radius;
     this.color = color;
     this.velocity = velocity;
+  }
+  sound(sound) {
+    stopSound(sound);
+    playSound(sound, 0.5);
   }
   draw(ctx) {
     ctx.beginPath();

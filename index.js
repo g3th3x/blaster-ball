@@ -2,7 +2,6 @@ import { Player } from "./src/Player.js";
 import { Missile } from "./src/Missile.js";
 import { Enemy } from "./src/Enemy.js";
 import { Particle } from "./src/Particle.js";
-// import { Score } from "./src/dis/Score.js";
 
 window.addEventListener("load", () => {
   const cvs = document.querySelector("canvas");
@@ -11,19 +10,16 @@ window.addEventListener("load", () => {
   cvs.height = window.innerHeight;
   ctx.imageSmoothingEnabled = false;
 
-  const laser = new Audio("./audio/laser.ogg");
-  laser.preload = "auto";
-  laser.volume = 0.1;
-  const blast = new Audio("./audio/blast.ogg");
-  blast.preload = "auto";
-  blast.volume = 0.1;
+  const soundEffects = {
+    laser: document.querySelector("audio#sound-laser"),
+    blast: document.querySelector("audio#sound-blast"),
+  };
 
   const startGameBtn = document.querySelector("#startGameBtn");
   const modalEl = document.querySelector("#modalEl");
   const scoreEl = document.querySelector("#scoreEl");
   const highScoreEl = document.querySelector("#highScoreEl");
   const highScoreLSEl = document.querySelector("#highScoreLSEl");
-  //   const score = new Score();
 
   let highScore = localStorage.getItem("highScore");
 
@@ -85,7 +81,7 @@ window.addEventListener("load", () => {
       ) &&
       !isGameOver
     )
-      laser.play();
+      player.sound(soundEffects.laser);
   });
 
   function spawnEnemies() {
@@ -180,11 +176,10 @@ window.addEventListener("load", () => {
 
           if (enemy.radius - 10 > 5) {
             // Increase score on hit
-            // score.increase(10);
             scoreTmp += 10;
             scoreEl.textContent = scoreTmp;
 
-            blast.play();
+            enemy.sound(soundEffects.blast);
 
             gsap.to(enemy, {
               radius: enemy.radius - 10,
@@ -194,11 +189,10 @@ window.addEventListener("load", () => {
             }, 0);
           } else {
             // Increase the score when an enemy removed from scene altogether
-            // score.increase(15);
             scoreTmp += 15;
             scoreEl.textContent = scoreTmp;
 
-            blast.play();
+            enemy.sound(soundEffects.blast);
 
             setTimeout(() => {
               enemies.splice(enemyIndex, 1);
@@ -208,7 +202,6 @@ window.addEventListener("load", () => {
         }
       });
     });
-    // score.draw(ctx);
   }
 
   startGameBtn.addEventListener("click", () => {
