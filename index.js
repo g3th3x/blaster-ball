@@ -11,9 +11,11 @@ window.addEventListener("load", () => {
   cvs.height = window.innerHeight;
   ctx.imageSmoothingEnabled = false;
 
-  const laser = new Audio("./audio/laser.wav");
+  const laser = new Audio("./audio/laser.ogg");
+  laser.preload = "auto";
   laser.volume = 0.1;
-  const blast = new Audio("./audio/blast.wav");
+  const blast = new Audio("./audio/blast.ogg");
+  blast.preload = "auto";
   blast.volume = 0.1;
 
   const startGameBtn = document.querySelector("#startGameBtn");
@@ -77,10 +79,13 @@ window.addEventListener("load", () => {
       y: Math.sin(angle) * accel,
     };
 
-    missiles.push(
-      new Missile(cvs.width / 2, cvs.height / 2, 5, "white", velocity)
-    );
-    if (!isGameOver) laser.play();
+    if (
+      missiles.push(
+        new Missile(cvs.width / 2, cvs.height / 2, 5, "white", velocity)
+      ) &&
+      !isGameOver
+    )
+      laser.play();
   });
 
   function spawnEnemies() {
