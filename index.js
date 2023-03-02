@@ -10,8 +10,6 @@ window.addEventListener("load", () => {
   cvs.height = window.innerHeight;
   ctx.imageSmoothingEnabled = false;
 
-  let frames = 0;
-
   const soundEffects = {
     laser: document.querySelector("audio#sound-laser"),
     blast: document.querySelector("audio#sound-blast"),
@@ -27,27 +25,27 @@ window.addEventListener("load", () => {
   const modalWindow = document.querySelector("#modalWindow");
   const setWindow = document.querySelector("#setWindow");
 
-  const scoreEl = document.querySelector("#scoreEl");
+  const currentScoreEl = document.querySelector("#currentScoreEl");
   const gameScoreEl = document.querySelector("#gameScoreEl");
   const highScoreEl = document.querySelector("#highScoreEl");
 
   const soundVolumeEl = document.querySelector("#soundVolumeEl");
 
-  let highScore = localStorage.getItem("highScore");
-  let scoreTmp = 0;
+  let highScore = 0;
+  let currentScore = 0;
 
   let player = new Player(cvs.width / 2, cvs.height / 2, 10, "white");
   let missiles = [];
   let enemies = [];
   let particles = [];
 
-  let requestId;
+  let requestId = 0;
+  let frames = 0;
 
   let isPause = false;
   let isGameOver = false;
 
-  localStorage.setItem("soundVolume", 0.5);
-  let volume;
+  let volume = 0;
 
   const accel = 5;
 
@@ -56,10 +54,10 @@ window.addEventListener("load", () => {
     missiles = [];
     enemies = [];
     particles = [];
-    scoreTmp = 0;
+    currentScore = 0;
 
-    scoreEl.textContent = scoreTmp;
-    gameScoreEl.textContent = scoreTmp;
+    currentScoreEl.textContent = 0;
+    gameScoreEl.textContent = 0;
 
     highScore = localStorage.getItem("highScore");
 
@@ -67,12 +65,11 @@ window.addEventListener("load", () => {
       ? (highScoreEl.textContent = highScore)
       : (highScoreEl.textContent = 0);
 
-    localStorage.getItem("soundVolume") >= 0
-      ? (volume = localStorage.getItem("soundVolume"))
-      : localStorage.setItem("soundVolume", 0.5);
-
     isPause = false;
     isGameOver = false;
+
+    volume = localStorage.getItem("soundVolume");
+    volume >= 0 ? volume : localStorage.setItem("soundVolume", 0.5);
   }
 
   document.addEventListener("keydown", (e) => {
@@ -174,9 +171,9 @@ window.addEventListener("load", () => {
       if (dist - enemy.radius - player.radius < 0.1) {
         cancelAnimationFrame(requestId);
         modalWindow.style.display = "flex";
-        gameScoreEl.textContent = scoreTmp;
-        if (scoreTmp > highScore) {
-          localStorage.setItem("highScore", scoreTmp);
+        gameScoreEl.textContent = currentScore;
+        if (currentScore > highScore) {
+          localStorage.setItem("highScore", currentScore);
         }
 
         isGameOver = true;
@@ -205,8 +202,8 @@ window.addEventListener("load", () => {
 
           if (enemy.radius - 10 > 5) {
             // Increase score on hit
-            scoreTmp += 10;
-            scoreEl.textContent = scoreTmp;
+            currentScore += 10;
+            currentScoreEl.textContent = currentScore;
 
             enemy.sound(soundEffects.blast, volume);
 
@@ -218,8 +215,8 @@ window.addEventListener("load", () => {
             }, 0);
           } else {
             // Increase the score when an enemy removed from scene altogether
-            scoreTmp += 15;
-            scoreEl.textContent = scoreTmp;
+            currentScore += 15;
+            currentScoreEl.textContent = currentScore;
 
             enemy.sound(soundEffects.blast, volume);
 
@@ -250,18 +247,17 @@ window.addEventListener("load", () => {
     mainWindow.style.display = "none";
   });
 
-  resetScoreBtn.addEventListener("click", () => {
-    localStorage.removeItem("highScore");
-    console.log("Reset");
-  });
-
   backBtn.addEventListener("click", () => {
     setWindow.style.display = "none";
     mainWindow.style.display = "flex";
   });
 
+  resetScoreBtn.addEventListener("click", () => {
+    localStorage.removeItem("highScore");
+  });
+
   soundVolumeEl.addEventListener("change", () => {
-    volume = localStorage.setItem("soundVolume", soundVolumeEl.value / 10);
+    localStorage.setItem("soundVolume", soundVolumeEl.value / 10);
     init();
   });
 });
