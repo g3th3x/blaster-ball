@@ -8,9 +8,9 @@ export class Enemy {
     this.color = color;
     this.velocity = velocity;
   }
-  sound(sound) {
+  sound(sound, volume) {
     stopSound(sound);
-    playSound(sound, 0.5);
+    playSound(sound, volume);
   }
   draw(ctx) {
     ctx.beginPath();

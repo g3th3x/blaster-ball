@@ -18,22 +18,36 @@ window.addEventListener("load", () => {
   };
 
   const startGameBtn = document.querySelector("#startGameBtn");
-  const modalEl = document.querySelector("#modalEl");
+  const restartGameBtn = document.querySelector("#restartGameBtn");
+  const settingsBtn = document.querySelector("#settingsBtn");
+  const backBtn = document.querySelector("#backBtn");
+  const resetScoreBtn = document.querySelector("#resetScoreBtn");
+
+  const mainWindow = document.querySelector("#mainWindow");
+  const modalWindow = document.querySelector("#modalWindow");
+  const setWindow = document.querySelector("#setWindow");
+
   const scoreEl = document.querySelector("#scoreEl");
+  const gameScoreEl = document.querySelector("#gameScoreEl");
   const highScoreEl = document.querySelector("#highScoreEl");
-  const highScoreLSEl = document.querySelector("#highScoreLSEl");
+
+  const soundVolumeEl = document.querySelector("#soundVolumeEl");
 
   let highScore = localStorage.getItem("highScore");
+  let scoreTmp = 0;
 
   let player = new Player(cvs.width / 2, cvs.height / 2, 10, "white");
   let missiles = [];
   let enemies = [];
   let particles = [];
 
-  let scoreTmp = 0;
   let requestId;
+
   let isPause = false;
   let isGameOver = false;
+
+  localStorage.setItem("soundVolume", 0.5);
+  let volume;
 
   const accel = 5;
 
@@ -43,14 +57,22 @@ window.addEventListener("load", () => {
     enemies = [];
     particles = [];
     scoreTmp = 0;
+
     scoreEl.textContent = scoreTmp;
-    highScoreEl.textContent = scoreTmp;
+    gameScoreEl.textContent = scoreTmp;
+
+    highScore = localStorage.getItem("highScore");
+
+    highScore > 0
+      ? (highScoreEl.textContent = highScore)
+      : (highScoreEl.textContent = 0);
+
+    localStorage.getItem("soundVolume") >= 0
+      ? (volume = localStorage.getItem("soundVolume"))
+      : localStorage.setItem("soundVolume", 0.5);
+
     isPause = false;
     isGameOver = false;
-    highScore = localStorage.getItem("highScore");
-    highScore > 0
-      ? (highScoreLSEl.textContent = highScore)
-      : (highScoreLSEl.textContent = 0);
   }
 
   document.addEventListener("keydown", (e) => {
@@ -83,7 +105,7 @@ window.addEventListener("load", () => {
       ) &&
       !isGameOver
     )
-      player.sound(soundEffects.laser);
+      player.sound(soundEffects.laser, volume);
   });
 
   function spawnEnemies() {
@@ -114,15 +136,20 @@ window.addEventListener("load", () => {
   function animate() {
     frames++;
     if (frames % 60 === 0) spawnEnemies();
+
     requestId = requestAnimationFrame(animate);
+
     ctx.fillStyle = "rgba(0,0,0,0.1)";
     ctx.fillRect(0, 0, cvs.width, cvs.height);
+
     player.draw(ctx);
+
     particles.forEach((particle, particleIndex) => {
       particle.alpha <= 0
         ? particles.slice(particleIndex, 1)
         : particle.update(ctx);
     });
+
     missiles.forEach((missile, missileIndex) => {
       missile.update(ctx);
 
@@ -146,8 +173,8 @@ window.addEventListener("load", () => {
       // Objects hit (Game Over)
       if (dist - enemy.radius - player.radius < 0.1) {
         cancelAnimationFrame(requestId);
-        modalEl.style.display = "flex";
-        highScoreEl.textContent = scoreTmp;
+        modalWindow.style.display = "flex";
+        gameScoreEl.textContent = scoreTmp;
         if (scoreTmp > highScore) {
           localStorage.setItem("highScore", scoreTmp);
         }
@@ -181,7 +208,7 @@ window.addEventListener("load", () => {
             scoreTmp += 10;
             scoreEl.textContent = scoreTmp;
 
-            enemy.sound(soundEffects.blast);
+            enemy.sound(soundEffects.blast, volume);
 
             gsap.to(enemy, {
               radius: enemy.radius - 10,
@@ -194,7 +221,7 @@ window.addEventListener("load", () => {
             scoreTmp += 15;
             scoreEl.textContent = scoreTmp;
 
-            enemy.sound(soundEffects.blast);
+            enemy.sound(soundEffects.blast, volume);
 
             setTimeout(() => {
               enemies.splice(enemyIndex, 1);
@@ -206,9 +233,35 @@ window.addEventListener("load", () => {
     });
   }
 
+  restartGameBtn.addEventListener("click", () => {
+    init();
+    animate();
+    modalWindow.style.display = "none";
+  });
+
   startGameBtn.addEventListener("click", () => {
     init();
     animate();
-    modalEl.style.display = "none";
+    mainWindow.style.display = "none";
+  });
+
+  settingsBtn.addEventListener("click", () => {
+    setWindow.style.display = "flex";
+    mainWindow.style.display = "none";
+  });
+
+  resetScoreBtn.addEventListener("click", () => {
+    localStorage.removeItem("highScore");
+    console.log("Reset");
+  });
+
+  backBtn.addEventListener("click", () => {
+    setWindow.style.display = "none";
+    mainWindow.style.display = "flex";
+  });
+
+  soundVolumeEl.addEventListener("change", () => {
+    volume = localStorage.setItem("soundVolume", soundVolumeEl.value / 10);
+    init();
   });
 });

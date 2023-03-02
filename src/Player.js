@@ -7,9 +7,9 @@ export class Player {
     this.radius = radius;
     this.color = color;
   }
-  sound(sound) {
+  sound(sound, volume) {
     stopSound(sound);
-    playSound(sound, 0.5);
+    playSound(sound, volume);
   }
   draw(ctx) {
     ctx.beginPath();
