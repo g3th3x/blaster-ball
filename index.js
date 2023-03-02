@@ -10,6 +10,8 @@ window.addEventListener("load", () => {
   cvs.height = window.innerHeight;
   ctx.imageSmoothingEnabled = false;
 
+  let frames = 0;
+
   const soundEffects = {
     laser: document.querySelector("audio#sound-laser"),
     blast: document.querySelector("audio#sound-blast"),
@@ -85,33 +87,33 @@ window.addEventListener("load", () => {
   });
 
   function spawnEnemies() {
-    setInterval(() => {
-      const radius = Math.random() * (30 - 5) + 5;
+    const radius = Math.random() * (30 - 5) + 5;
 
-      let x, y;
+    let x, y;
 
-      if (Math.random() < 0.5) {
-        x = Math.random() < 0.5 ? 0 - radius : cvs.width + radius;
-        y = Math.random() * cvs.height;
-      } else {
-        x = Math.random() * cvs.width;
-        y = Math.random() < 0.5 ? 0 - radius : cvs.height + radius;
-      }
+    if (Math.random() < 0.5) {
+      x = Math.random() < 0.5 ? 0 - radius : cvs.width + radius;
+      y = Math.random() * cvs.height;
+    } else {
+      x = Math.random() * cvs.width;
+      y = Math.random() < 0.5 ? 0 - radius : cvs.height + radius;
+    }
 
-      const color = `hsl(${Math.random() * 360},50%,50%)`;
+    const color = `hsl(${Math.random() * 360},50%,50%)`;
 
-      const angle = Math.atan2(cvs.height / 2 - y, cvs.width / 2 - x);
+    const angle = Math.atan2(cvs.height / 2 - y, cvs.width / 2 - x);
 
-      const velocity = {
-        x: Math.cos(angle),
-        y: Math.sin(angle),
-      };
+    const velocity = {
+      x: Math.cos(angle),
+      y: Math.sin(angle),
+    };
 
-      enemies.push(new Enemy(x, y, radius, color, velocity));
-    }, 1000);
+    enemies.push(new Enemy(x, y, radius, color, velocity));
   }
 
   function animate() {
+    frames++;
+    if (frames % 60 === 0) spawnEnemies();
     requestId = requestAnimationFrame(animate);
     ctx.fillStyle = "rgba(0,0,0,0.1)";
     ctx.fillRect(0, 0, cvs.width, cvs.height);
@@ -207,7 +209,6 @@ window.addEventListener("load", () => {
   startGameBtn.addEventListener("click", () => {
     init();
     animate();
-    spawnEnemies();
     modalEl.style.display = "none";
   });
 });
